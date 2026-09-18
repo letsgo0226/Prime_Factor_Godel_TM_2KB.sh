@@ -1,0 +1,45 @@
+name: Prime-Factor Godel TM Seed-P
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  push:
+    branches: [main, master]
+    paths:
+      - "Prime_Factor_Godel_TM_2KB_Seed-P.sh"
+      - "Prime_Factor_Godel_TM_2KB_Seed-P.md"
+      - ".github/workflows/prime-factor-godel-tm-seed-p.yml"
+  workflow_dispatch:
+  repository_dispatch:
+    types: [prime_factor_godel_tm_seed_p]
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Seed-P Q+ certificate
+        run: |
+          set -euo pipefail
+          BYTES=$(wc -c < Prime_Factor_Godel_TM_2KB_Seed-P.sh | tr -d ' ')
+          echo "bytes=$BYTES"
+          test "$BYTES" -lt 2048
+          bash Prime_Factor_Godel_TM_2KB_Seed-P.sh 8 | tee seed_p.json
+          python3 - <<'PY'
+          import json
+          o=json.load(open("seed_p.json"))
+          assert o.get("exact") is True
+          assert o.get("open")==1 and o.get("final")==0
+          assert o.get("omega_attained")==0 and o.get("program_equals_zeta")==0
+          assert o["levels"][0][2]==[2,3,5,7,11,13]
+          assert "Q+" in str(o.get("state",""))
+          print("PASS Seed-P a=P exact in Q+")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seed-p-certificate
+          path: seed_p.json
