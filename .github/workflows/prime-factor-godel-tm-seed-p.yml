@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Verify Seed-P Q+ certificate
+      - name: Verify Seed-P exact Z/Q certificate
         run: |
           set -euo pipefail
           BYTES=$(wc -c < Prime_Factor_Godel_TM_2KB_Seed-P.sh | tr -d ' ')
@@ -32,12 +32,14 @@ jobs:
           python3 - <<'PY'
           import json
           o=json.load(open("seed_p.json"))
+          assert o.get("model")=="EXACT_PRIME_FACTOR_GODEL_TM"
           assert o.get("exact") is True
+          assert o.get("seed")==[2,3,5,7,11,13]
           assert o.get("open")==1 and o.get("final")==0
           assert o.get("omega_attained")==0 and o.get("program_equals_zeta")==0
           assert o["levels"][0][2]==[2,3,5,7,11,13]
-          assert "Q+" in str(o.get("state",""))
-          print("PASS Seed-P a=P exact in Q+")
+          assert "no floating point" in str(o.get("arithmetic",""))
+          print("PASS EXACT Seed-P a=P Z/Q only")
           PY
       - uses: actions/upload-artifact@v4
         with:

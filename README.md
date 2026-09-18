@@ -6,7 +6,7 @@ Six-prime Gödel TM one-liners (`P=(2,3,5,7,11,13)`).
 |------|----------|----------|
 | `Prime_Factor_Godel_TM_2KB.sh` | `[0,0,1,0,1,1]` | `ℕ` |
 | `Prime_Factor_Godel_TM_2KB_Seed-222111.sh` | `[2,2,2,1,1,1]` | `ℕ` |
-| `Prime_Factor_Godel_TM_2KB_Seed-P.sh` | **`[2,3,5,7,11,13]` (=`P`)** | **`Q⁺`** |
+| `Prime_Factor_Godel_TM_2KB_Seed-P.sh` | **`[2,3,5,7,11,13]` (=`P`)** | **`Q⁺` exact ℤ/ℚ (no float)** |
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/letsgo0226/Prime_Factor_Godel_TM_2KB.sh/main/Prime_Factor_Godel_TM_2KB_Seed-P.sh | bash

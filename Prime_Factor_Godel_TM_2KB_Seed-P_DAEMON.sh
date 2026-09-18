@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Seed-P (a=P, G in Q+) resident loop — default interval 1s
+# Seed-P exact Z/Q resident loop — default interval 1s
 set -u
 INTERVAL="${1:-${PFGP_INTERVAL:-1}}"
 N="${2:-${PFGP_N:-4}}"
@@ -13,7 +13,7 @@ if [[ ! -f "$SCRIPT" ]]; then
   curl -fsSL "$RAW_URL" -o "$SCRIPT" || exit 1
 fi
 command -v python3 >/dev/null || exit 127
-echo "{\"daemon\":\"PRIME_FACTOR_GODEL_TM_SEED_P\",\"interval\":$INTERVAL,\"N\":$N,\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" | tee -a "$LOG"
+echo "{\"daemon\":\"EXACT_PRIME_FACTOR_GODEL_TM_SEED_P\",\"interval\":$INTERVAL,\"N\":$N,\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" | tee -a "$LOG"
 while true; do
   TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
   OUT=$(mktemp)
@@ -22,13 +22,15 @@ while true; do
 import json,sys
 o=json.load(open(sys.argv[1]))
 lv=o.get("levels") or []
-ok=(o.get("model")=="PRIME_FACTOR_GODEL_TM" and o.get("exact") is True
+ok=(o.get("model")=="EXACT_PRIME_FACTOR_GODEL_TM" and o.get("exact") is True
     and o.get("omega_attained")==0 and o.get("program_equals_zeta")==0
     and o.get("open")==1 and o.get("final")==0
-    and bool(lv) and lv[0][2]==[2,3,5,7,11,13])
+    and o.get("seed")==[2,3,5,7,11,13]
+    and bool(lv) and lv[0][2]==[2,3,5,7,11,13]
+    and "no floating point" in str(o.get("arithmetic","")))
 sys.exit(0 if ok else 2)
 PY
-    then echo "{\"ts\":\"$TS\",\"status\":\"pass\"} $(tr -d '\n' <\"$OUT\")" >>"$LOG"
+    then echo "{\"ts\":\"$TS\",\"status\":\"pass\"} $(tr -d '\n' <"$OUT")" >>"$LOG"
     else echo "{\"ts\":\"$TS\",\"status\":\"assert_fail\"}" >>"$LOG"
     fi
   else echo "{\"ts\":\"$TS\",\"status\":\"run_fail\"}" >>"$LOG"
