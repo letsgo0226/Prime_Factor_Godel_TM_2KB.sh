@@ -28,7 +28,7 @@ ok=(o.get("model")=="PRIME_FACTOR_GODEL_TM" and o.get("exact") is True
     and bool(lv) and lv[0][2]==[2,3,5,7,11,13])
 sys.exit(0 if ok else 2)
 PY
-    then echo "{\"ts\":\"$TS\",\"status\":\"pass\"} $(tr -d '\n' <"$OUT")" >>"$LOG"
+    then echo "{\"ts\":\"$TS\",\"status\":\"pass\"} $(tr -d '\n' <\"$OUT\")" >>"$LOG"
     else echo "{\"ts\":\"$TS\",\"status\":\"assert_fail\"}" >>"$LOG"
     fi
   else echo "{\"ts\":\"$TS\",\"status\":\"run_fail\"}" >>"$LOG"
